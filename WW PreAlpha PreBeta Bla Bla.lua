@@ -49,11 +49,8 @@ OnTick(function(myHero)
 			
 			if IsReady(_Q) and (GetDistance(target) <= 400 )then
 				CastSpell(_Q)
-			
-			
-					
-							
-							
-							
-							
-							
+				
+			end
+		end
+	end
+end
