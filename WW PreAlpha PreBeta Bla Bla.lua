@@ -45,7 +45,7 @@ OnTick(function(myHero)
 
 		local target = GetCurrentTarget()
 		
-		if IOW:Mode == "Combo" then
+		if IOW:Mode() == "Combo" then
 			
 			if IsReady(_Q) and (GetDistance(target) <= 400 )then
 				CastSpell(_Q)
