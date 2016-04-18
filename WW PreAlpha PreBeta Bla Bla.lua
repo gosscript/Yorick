@@ -19,6 +19,13 @@ WWMenu.Drawings:Boolean("DrawQ", "Draw Q Range", true)
 WWMenu.Drawings:Boolean("DrawW", "Draw W&R Range", true)
 WWMenu.Drawings:Slider("Quality", "Quality", 125, 1, 255)
 
+
+WWMenu.healthP:Value()
+
+WWMenu:Slider("healthP","Health to use stuff", 40,  0 , 90, 1)
+
+
+
 local Ignite = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
 
 OnDraw(function(myHero) "" soon TM ""
@@ -66,7 +73,7 @@ if IOW:Mode() == "Combo" then
 
 for _, enemy in pairs(GetEnemyHeroes()) do
 	
-	if WMenu.Killsteal.R:Value() and Ready(_R) and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, RDmg) and ValidTarget(enemy, RRange) then
+	if WMenu.Killsteal.R:Value() and Ready(_R) and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, RDmg) and ValidTarget(enemy, RRange) and  then
 			CastTargetSpell(enemy, _R)
 		end
 	end
