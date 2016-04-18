@@ -4,24 +4,15 @@ require('Inspired')
 
 local WWMenu = MenuConfig("Warwick","Warwick")
 
-WWMenu:Menu("Combo")
+WWMenu:SubMenu("Combo", "Combo")
 
-WWMenu.Combo:Menu("QSettings", "Q - Settings")
-WWMenu.Combo.QSettings:Boolean("Q", "Use Q", true)
-WWMenu.Combo.QSettings:Slider("QMana", "Use Q if %mana >",70, 1, 100, 1) 
+WWMenu.Combo:Boolean("Q", "Use Q in combo", true)
+WWMenu.Combo:Boolean("W", "Use W in combo", true)
+WWMenu.Combo:Boolean("E", "Use E in combo", true)
 
-
-WWMenu.Combo:Menu("WSettings", "W - Settings")
-WWMenu.Combo.WSettings:Boolean("W", "Use W", true)
-WWMenu.Combo.QSettings:Slider("QMana", "Use Q if %mana >",35, 1, 100, 1)
-
-
-WWMenu.Combo:Menu("RSettings", "R - Settings")
-WWMenu.Combo.RSettings:Boolean("R", "Use R", false)
-
-WWMenu:Menu("Killsteal", "Killsteal")
-WWMenu.Killsteal:Boolean("KillQ", "Use Q", true)
-WWMenu.Killsteal:Boolean("KillIgnite", "Use Ignite", false)
+WWMenu:SubMenu("Misc", "Misc")
+WWMenu.Misc:Boolean("Level", "Auto level spells", true)
+WWMenu.Misc:Boolean("Ignite", "Auto Ignite if killable", true)
 
 WWMenu:Menu("Drawings", "Drawings")
 WWMenu.Drawings:Boolean("DrawQ", "Draw Q Range", true)
@@ -32,25 +23,78 @@ local Ignite = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerdot") 
 
 OnDraw(function(myHero)
 
-	if WWMenu.Drawings.DrawQ:Value() and IsReady(_Q) then
-		DrawCircle(GetOrigin(myHero), 400, 1, WWMenu.Drawings.Quality:Value(), GoS.Green)
-		--DrawCircle(Vector3D, radius, width, quality, color)
-	end
-	if WWMenu.Drawings.DrawW:Value() and (IsReady(_W) or IsReady(_R)) then
-		DrawCircle(GetOrigin(myHero), 900, 1, WWMenu.Drawings.Quality:Value(), GoS.Yellow)
-	end
-end)
+OnTick(function (myHero)
 
-OnTick(function(myHero)
+	local target = GetCurrentTarget()
+	local BaseHPHero = GetMaxHP(myHero)
+	local CurrentHPHero = GetCurrentHP(myHero)
+	local BaseHPTarget = GetMaxHP(target)
+	local CurrentHPTarget = GetCurrentHP(target)
+	local MeleeRange = 125 GetLevel(myHero)
+	local BaseAD = GetBaseDamage(myHero)
+	local BonusAD = GetBonusDmg(myHero)
+	local BonusAP = GetBonusAP(myHero)
+	local QRange = 400
+	local WRange = 1250
+	local ERange = 1500 + 800 * GetLevel(myHero)
+	local RRange = 700
+	
+	if WW.Misc.Level:Value() then
 
-		local target = GetCurrentTarget()
+			spellorder = {_W, _Q, _W, _E, _W, _R, _W, _Q, _W, _Q, _R, _Q, _Q, _E, _E, _R, _E, _E}
+			if GetLevelPoints(myHero) > 0 then
+				LevelSpell(spellorder[GetLevel(myHero) + 1 - GetLevelPoints(myHero)])
+			end
+
+	end
+	
+if IOW:Mode() == "Combo" then
+
+		if WWMenu.Combo.W:Value() and Ready(_W) and ValidTarget(target, 700) then
+			CastTargetSpell(target, _W)
+		end
+
+		if WWMenu.Combo.Q:Value() and Ready(_Q) and ValidTarget(target, QRange) then
+			CastSpell(target _Q)
+		end
+
+		if WWMenu.Combo.R:Value() and Ready(_R) and GetDistance(myHero, target) < RRange and GetDistance(myHero, target) > RRange and EnemiesAround(target, 700) < 2 then
 		
-		if IOW:Mode() == "Combo" then
-			
-			if IsReady(_Q) and (GetDistance(target) <= 400 )then
-				CastSpell(_Q)
-				
+				CastSkillShot(_R, target)
 			end
 		end
+
+for _, enemy in pairs(GetEnemyHeroes()) do
+	
+	if WMenu.Killsteal.R:Value() and Ready(_R) and GetCurrentHP(enemy) < CalcDamage(myHero, enemy, 0, RDmg) and ValidTarget(enemy, RRange) then
+			CastTargetSpell(enemy, _R)
+		end
 	end
+end
+
+if WWMenu.Misc.Ignite:Value() then
+
+		for _, enemy in pairs(GetEnemyHeroes()) do
+		
+			if GetCastName(myHero, SUMMONER_1) == "SummonerDot" then
+				local Ignite = SUMMONER_1
+				if ValidTarget(enemy, 600) then
+					if 20 * GetLevel(myHero) + 50 > GetCurrentHP(enemy) + GetHPRegen(enemy) * 3 then
+						CastTargetSpell(enemy, Ignite)
+					end
+				end
+
+			elseif GetCastName(myHero, SUMMONER_2) == "SummonerDot" then
+				local Ignite = SUMMONER_2
+				if ValidTarget(enemy, 600) then
+					if 20 * GetLevel(myHero) + 50 > GetCurrentHP(enemy) + GetHPRegen(enemy) * 3 then
+						CastTargetSpell(enemy, Ignite)
+					end
+				end
+			end
+
+		end
+
+	end
+
 end)
