@@ -21,7 +21,7 @@ WWMenu.Drawings:Slider("Quality", "Quality", 125, 1, 255)
 
 local Ignite = (GetCastName(GetMyHero(),SUMMONER_1):lower():find("summonerdot") and SUMMONER_1 or (GetCastName(GetMyHero(),SUMMONER_2):lower():find("summonerdot") and SUMMONER_2 or nil))
 
-OnDraw(function(myHero)
+OnDraw(function(myHero) "" soon TM ""
 
 OnTick(function (myHero)
 
@@ -50,17 +50,17 @@ OnTick(function (myHero)
 	
 if IOW:Mode() == "Combo" then
 
-		if WWMenu.Combo.W:Value() and Ready(_W) and ValidTarget(target, 700) then
-			CastTargetSpell(target, _W)
+		if WWMenu.Combo.W:Value() and Ready(_W) and Ready(_Q) and ValidTarget(target, 700) then
+			CastTargetSpell(_W)
 		end
 
 		if WWMenu.Combo.Q:Value() and Ready(_Q) and ValidTarget(target, QRange) then
 			CastSpell(target _Q)
 		end
 
-		if WWMenu.Combo.R:Value() and Ready(_R) and GetDistance(myHero, target) < RRange and GetDistance(myHero, target) > RRange and EnemiesAround(target, 700) < 2 then
+		if WWMenu.Combo.R:Value() and Ready(_R) and GetDistance(myHero, target) < RRange and GetDistance(myHero, target) > RRange and EnemiesAround(target, 700) < 2 and  then
 		
-				CastSkillShot(_R, target)
+				CastSpell(target _R)
 			end
 		end
 
@@ -89,12 +89,14 @@ if WWMenu.Misc.Ignite:Value() then
 				if ValidTarget(enemy, 600) then
 					if 20 * GetLevel(myHero) + 50 > GetCurrentHP(enemy) + GetHPRegen(enemy) * 3 then
 						CastTargetSpell(enemy, Ignite)
-					end
+					
+												end
+										end
+								end
+
+						end
+
 				end
-			end
-
 		end
-
-	end
-
+end
 end)
