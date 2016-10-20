@@ -1,0 +1,56 @@
+if GetObjectName(GetMyHero()) ~= "Braum" then return end
+
+require("OpenPredict")
+
+local BraumMenu = Menu("Braum", "Sherpherd Braum")
+BraumMenu:SubMenu("Recommended script -- Auto Level Up bygamsteron -- AutoLevelSpells")
+BraumMenu:SubMenu("Combo", "Combo")
+BraumMenu.Combo:Boolean("Q", "Use Q", true)
+BraumMenu.Combo:Boolean("R", "Use R", true)
+BraumMenu.Combo:Boolean("W", "Use W", true)
+BraumMenu.Combo:Boolean("E", "Use E", true)
+BraumMenu:SubMenu("misc", "Misc Settings")
+BraumMenu:SubMenu("drawing", "Draw Settings")	
+
+
+for i = 0,3 do
+	local str = {[0] = "Q", [1] = "W", [2] = "E", [3] = "R"}
+	BraumMenu.drawing:Boolean(str[i], "Draw "..str[i], true)
+	BraumMenu.drawing:ColorPick(str[i].."c", "Drawing Color", {255, 25, 155, 175})
+end
+
+local BraumQ = {delay = 250, range = 1000, radius = 90, speed = 2000}
+
+local BraumR = {delay = 250, range = 1250, radius = 100, speed = 1500}
+	
+	 
+OnTick(function (myHero)
+	local target = GetCurrentTarget()	
+	if IOW:Mode() == "Combo" then
+	
+		if BraumMenu.Combo.Q:Value() and Ready(_Q) and ValidTarget(target, 970) then 
+		local QPred = GetPrediction(target,BraumQ)
+			if QPred.hitChance > 0.2 and not QPred:mCollision(1) then
+				CastSkillShot(_Q,QPred.castPos)
+			end
+		end
+		if BraumMenu.Combo.E:Value() and Ready(_E) and ValidTarget(target, 600) then 
+			CastSpell(_E)
+		end
+		if BraumMenu.Combo.R:Value() and Ready(_R) and ValidTarget(target, 1200) then
+			local RPred = GetPrediction(target,BraumR)
+			if RPred.hitChance > 0.2 then
+				CastSkillShot(_R,RPred.castPos)
+			end
+			
+	end
+	
+end)
+	 
+
+-- i need help to w setting
+
+
+
+print ("Shepherd Braum Loaded Good Luck")
+
